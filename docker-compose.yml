@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+    db:
+        image: mysql:5.7
+        restart: unless-stopped
+        networks:
+            - net
+        ports:
+            - "3306:3306"
+        env_file:
+            - .env
+
+    app:
+        image: quantumobject/docker-zoneminder
+        depends_on:
+            - db
+        restart: unless-stopped
+        networks:
+            - net
+        ports:
+            - "1080:80"
+        environment:
+            - TZ=America/Los_Angeles
+            - VIRTUAL_HOST=zm.localhost, stream0.localhost
+            - SERVICE_PORTS="80"
+            - ZM_SERVER_HOST=node.0
+            - ZM_DB_HOST=db
+
+networks:
+    net:
